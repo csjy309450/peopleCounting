@@ -1,5 +1,7 @@
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include "InterestingPointDetector.h"
 
 using namespace std;
@@ -84,7 +86,7 @@ void processVideo(const char* videoFilename)
         ++frameNumber;
 
         /* Gets the input from the keyboard. */
-        keyboard = waitKey(1);
+        keyboard = waitKey(10);
     }
 
     /* Delete capture object. */
