@@ -283,10 +283,10 @@ void Uniformization(cv::Mat* Frame)
 
 float cotangent(float divident, float divisor) //1/tan(divident/divisor)
 {
-    if(divident==0)
-    {
-        return 1000;
-    }
+//    if(divident==0)
+//    {
+//        return 1000;
+//    }
     if(divisor==0)
     {
         return atan2(divident, 1);

@@ -42,7 +42,7 @@ bool InterestingPointDetector::ProcessFrame(cv::Mat* inputFrame, cv::Mat* output
     m_matControler.MatCotangent(&g_y, &g_x, &mat_O);
     m_matControler.EuclideanNorm(&g_x, &g_y, &mat_M);
 
-    *outputFrame = Mat(mat_M);
+    *outputFrame = Mat(mat_O);
 
 //    *outputFrame = mat_M.clone();
 

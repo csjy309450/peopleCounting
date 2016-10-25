@@ -62,7 +62,8 @@ void processVideo(const char* videoFilename)
 
   /* Variables. */
     static int frameNumber = 1; /* The current frame number */
-    Mat frame;                  /* Current frame. */
+    Mat source_frame;                  /* Current frame. */
+    Mat frame;
     Mat outputFrame;
     int keyboard = 0;           /* Input from keyboard. Used to stop the program. Enter 'q' to quit. */
     InterestingPointDetector ipd;
@@ -70,11 +71,12 @@ void processVideo(const char* videoFilename)
   /* Read input data. ESC or 'q' for quitting. */
     while ((char)keyboard != 'q' && (char)keyboard != 27) {
         /* Read the current frame. */
-        if (!capture.read(frame)) {
+        if (!capture.read(source_frame)) {
             cerr << "Unable to read next frame." << endl;
             cerr << "Exiting..." << endl;
             exit(EXIT_FAILURE);
         }
+        cvtColor(source_frame, frame, CV_BGR2GRAY);
 
         // segmentation
         ipd.ProcessFrame(&frame, &outputFrame, frameNumber);
