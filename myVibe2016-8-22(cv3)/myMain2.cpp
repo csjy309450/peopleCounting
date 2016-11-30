@@ -35,15 +35,15 @@ void help()
 int main(int argc, char* argv[])
 {
   /* Print help information. */
-  help();
+//  help();
 
 
   /* Check for the input parameter correctness. */
-  if (argc != 2) {
-    cerr <<"Incorrect input" << endl;
-    cerr <<"exiting..." << endl;
-    return EXIT_FAILURE;
-  }
+//  if (argc != 2) {
+//    cerr <<"Incorrect input" << endl;
+//    cerr <<"exiting..." << endl;
+//    return EXIT_FAILURE;
+//  }
 
   /* Create GUI windows. */
   namedWindow("Frame");
@@ -69,18 +69,30 @@ string ltos(long l)
 /**
  * Get Next frame
  */
-bool ReadFrameFromDoc(const char *docPath, const char *baseFrameName, long frameNumber, const char *fileType, Mat *frame)
+bool ReadFrameFromDoc(const char *docPath, const char *baseFrameName, long frameNumber, const char *fileType, Mat *outframe)
 {
     std::string framePath = string(docPath);
+    std::string s_frameNumber;
     framePath += string(baseFrameName);
-    framePath += ltos(frameNumber)+string(fileType);
+    if(frameNumber<100)
+    {
+        if(frameNumber<10)
+        {
+            s_frameNumber = std::string("00")+ltos(frameNumber);
+        }
+        else
+        {
+            s_frameNumber = std::string("0")+ltos(frameNumber);
+        }
+    }
+    framePath += s_frameNumber+string(fileType);
     bool b_getFrame = false;
     try
     {
-        imread(framePath);
+        *outframe = imread(framePath);
         b_getFrame = true;
     }
-    catch
+    catch(double)
     {
         std::cout<<"read frame failed"<<std::endl;
     }
@@ -102,7 +114,7 @@ void processVideo(char* videoFilename)
   myVibe m_vibe;
 
   /* Read input data. ESC or 'q' for quitting. */
-  while ((char)keyboard != 'q' && (char)keyboard != 27) {
+  while ((char)keyboard != 'q' && (char)keyboard != 27 && frameNumber<=200) {
     /* Read the current frame. */
     if (!ReadFrameFromDoc("/home/yangzheng/testData/ucsd/vidf1_33_000.y/","vidf1_33_000_f",frameNumber,".png",&frame)) {
       cerr << "Unable to read next frame." << endl;
@@ -120,10 +132,7 @@ void processVideo(char* videoFilename)
     ++frameNumber;
 
     /* Gets the input from the keyboard. */
-    keyboard = waitKey(1);
+    keyboard = waitKey(1000);
   }
-
-  /* Delete capture object. */
-  capture.release();
 }
 
