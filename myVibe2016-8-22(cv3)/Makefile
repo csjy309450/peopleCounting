@@ -1,8 +1,8 @@
 LIBS_OPENCV = `$(prefix)pkg-config --libs opencv`
 INCLUDE_OPENCV = `$(prefix)pkg-config --cflags opencv`
 
-myMain: myMain.cpp myVibe.o
-	g++ -O3 -Wall -Werror -pedantic $(INCLUDE_OPENCV) myMain.cpp myVibe.o \
+myMain: myMain2.cpp myVibe.o
+	g++ -O3 -Wall -Werror -pedantic $(INCLUDE_OPENCV) myMain2.cpp myVibe.o \
 		vibe-background-sequential.o -ggdb $(LIBS_OPENCV) -o myMain
 
 myVibe.o: myVibe.cpp vibe-background-sequential.o
