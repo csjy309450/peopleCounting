@@ -15,9 +15,8 @@ import tensorflow as tf
 import cv2
 from sklearn.externals import joblib
 
-import body.NMS
-import body.body
-import body.body_eval
+import BodyDetector.NMS as NMS
+import BodyDetector.body as body
 import BackgroudSegmenatation as bs
 
 FLAGS = tf.app.flags.FLAGS
@@ -42,11 +41,11 @@ class BodyDetection:
             # a = images.get_shape()
 
             # Build a Graph that computes the logits predictions from the inference model.
-            self.logits = body.body.predict_inference(self.images)
+            self.logits = body.predict_inference(self.images)
 
             # Restore the moving average version of the learned variables for eval.
             variable_averages = tf.train.ExponentialMovingAverage(
-                body.body.MOVING_AVERAGE_DECAY)
+                body.MOVING_AVERAGE_DECAY)
             variables_to_restore = variable_averages.variables_to_restore()
             saver = tf.train.Saver(variables_to_restore)
             self.sess = tf.Session()
@@ -111,7 +110,7 @@ class BodyDetection:
                                                               [int(x_w-pathSize[0]/2), int(x_h-pathSize[1]/2),
                                                                int(x_w+pathSize[0]/2), int(x_h+pathSize[1]/2), pred_value]))
             ## NMS放在每个bounding rect完成遍历之后,然后记录real person
-            t_RealPersonIndex = body.NMS.py_cpu_nms(personsRectArray, self.param_dict["nms_thresh"])
+            t_RealPersonIndex = NMS.py_cpu_nms(personsRectArray, self.param_dict["nms_thresh"])
             self.RealPersonArray = np.row_stack((self.RealPersonArray, personsRectArray[t_RealPersonIndex, 0:4]))
 
     def getRealPersonArray(self):

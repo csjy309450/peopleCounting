@@ -4,7 +4,6 @@ import os.path as path
 import numpy as np
 import copy
 import cv2
-from sklearn.externals import joblib
 import DocManager.DocManager as dm
 
 # imgDir = '/home/yangzheng/testData/ucsd/vidf1_33_000.y'

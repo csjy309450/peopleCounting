@@ -4,7 +4,7 @@ import cv2
 import datetime
 
 
-import body.BodyDetection as bd
+import BodyDetector.BodyDetection as bd
 import BackgroudSegmenatation as bs
 
 param_dict_ucsd = {

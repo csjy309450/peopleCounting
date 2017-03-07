@@ -46,23 +46,28 @@ import numpy as np
 from six.moves import urllib
 import tensorflow as tf
 
-import body.body_input
-
 FLAGS = tf.app.flags.FLAGS
+
+root_path = "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/"
 
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('data_dir', '/home/yangzheng/myPrograms/personsCounting/body/body_data',
+tf.app.flags.DEFINE_string('data_dir', root_path + 'BodyDetector/body_data',
                            """Path to the CIFAR-10 data directory.""")
+tf.app.flags.DEFINE_string('train_dir', root_path + 'BodyDetector/body_train',
+                           """Directory where to write""")
+tf.app.flags.DEFINE_string('checkpoint_dir', root_path + 'BodyDetector/body_train',
+                           """Directory where to read model checkpoints.""")
 tf.app.flags.DEFINE_boolean('use_fp16', False,
                             """Train the model using fp16.""")
 
-# Global constants describing the CIFAR-10 data set.
-IMAGE_SIZE = body.body_input.IMAGE_SIZE
-NUM_CLASSES = body.body_input.NUM_CLASSES
-NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = body.body_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
-NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = body.body_input.NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
+# Global constants describing the body data set.
+IMAGE_SIZE = 24
+NUM_CLASSES = 2
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 2402
+NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 382
+
 
 
 # Constants describing the training process.
