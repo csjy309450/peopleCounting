@@ -1,6 +1,0 @@
-model_checkpoint_path: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-19999"
-all_model_checkpoint_paths: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-0"
-all_model_checkpoint_paths: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-5000"
-all_model_checkpoint_paths: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-10000"
-all_model_checkpoint_paths: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-15000"
-all_model_checkpoint_paths: "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/body/body_train/model.ckpt-19999"
