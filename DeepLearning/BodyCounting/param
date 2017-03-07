@@ -1,0 +1,7 @@
+ucsd: 	computPersonSize(..., corection=(0.5, 1.5)) #使用模型计算任务的长和宽
+      	FindBoudingBox(..., corection=(3, 6)) #过滤掉不达标的boundingBox
+	  	NMS.py_cpu_nms(..., thresh=0.1)
+
+pet:  	computPersonSize(..., corection=(2, 4))  
+      	FindBoudingBox(..., corection=(4, 8))    
+	  	NMS.py_cpu_nms(..., thresh=0.3)
