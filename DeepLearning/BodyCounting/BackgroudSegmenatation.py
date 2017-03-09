@@ -131,7 +131,7 @@ class BackgroudSegmentation:
         读取一帧图像提取前景图像,寻找有效Rect搜索区域
         :return:
         """
-        if ~self.isnot_take_out():
+        if not self.isnot_take_out():
             return
         ## 加载图像
         self.frame = cv2.imread(path.join(self.imgDir, self.imgsList[self.nframe]))
@@ -165,7 +165,8 @@ class BackgroudSegmentation:
         return self.nframe
 
     def isnot_take_out(self):
-        return ~(self.nframe == len(self.imgsList)-1)
+        # print not(self.nframe == len(self.imgsList)-1)
+        return not (self.nframe == len(self.imgsList)-1)
 
 if __name__ == '__main__':
     imgDir = '/home/yangzheng/testData/pet/test/gammaCorrection'

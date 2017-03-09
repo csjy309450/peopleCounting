@@ -5,6 +5,7 @@ import os.path as path
 import cv2
 import datetime
 
+import BodyDetector.body as body
 import BodyDetector.BodyDetection as bd
 import BackgroudSegmenatation as bs
 
@@ -19,7 +20,7 @@ param_dict_ucsd = {
 }
 
 param_dict_pet = {
-    "imags_directory": "/home/yangzheng/testData/pet/View_001",
+    "imags_directory": "",
     "input_shape": [1, 24, 24, 3],
     "person_tall_model_path": "./personTall_Regression/pet_personTall_Model.m",
     "person_wh_correction": (2, 4),
@@ -29,23 +30,13 @@ param_dict_pet = {
 }
 
 imags_directory_list = [
-#"/home/yangzheng/testData/ucsd/vidf1_33_000.y",
-# "/home/yangzheng/testData/ucsd/vidf1_33_001.y",
-# "/home/yangzheng/testData/ucsd/vidf1_33_002.y",
-# "/home/yangzheng/testData/ucsd/vidf1_33_003.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_004.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_005.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_006.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_007.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_008.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_009.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_010.y",
-"/home/yangzheng/testData/ucsd/vidf1_33_011.y",
+    "/home/yangzheng/testData/pet/View_001"
 ]
-result_dir_path = "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/result_images/uscd_result"
+result_dir_path = "./result_images/pet_result"
+param_dict = param_dict_pet
 
 for im_dir in imags_directory_list:
-    param_dict_ucsd["imags_directory"] = im_dir
+    param_dict["imags_directory"] = im_dir
     cur_result_dir = path.join(result_dir_path, path.split(im_dir)[1])
     try:
         os.makedirs(cur_result_dir)
@@ -53,11 +44,10 @@ for im_dir in imags_directory_list:
         if e.args[1] != "File exists":
             exit(0)
 
-    mybd = bd.BodyDetection(param_dict_ucsd)
+    mybd = bd.BodyDetection(param_dict)
     person_count_file = path.join(cur_result_dir, "person_count.txt")
     f = open(person_count_file, mode="w")
-    while mybd.mybs.isnot_take_out() is True:
-        print mybd.mybs.isnot_take_out()
+    while mybd.mybs.isnot_take_out():
         frameStartTime = datetime.datetime.now()
         mybd.mybs.ImgSeqProcessing()
         frame = mybd.mybs.getCurrentFrame()
@@ -84,7 +74,7 @@ for im_dir in imags_directory_list:
 
         frameEndTime = datetime.datetime.now()
         print "time is: ", (frameEndTime - frameStartTime).seconds, "(s)", \
-            (frameEndTime - frameStartTime), "(ms)"
+            (frameEndTime - frameStartTime), "(μs)"
 
         ## display result image
         reulte = copy.deepcopy(frame)

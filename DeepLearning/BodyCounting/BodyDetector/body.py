@@ -47,7 +47,7 @@ import tensorflow as tf
 
 FLAGS = tf.app.flags.FLAGS
 
-root_path = "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/"
+root_path = "/home/yangzheng/myPrograms/peopleCounting/DeepLearning/BodyCounting/"
 
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 128,
