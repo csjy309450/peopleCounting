@@ -77,8 +77,7 @@ class BodyDetection:
         personSize = (int(personRect[0, 0]+corection[0]), int(personRect[0, 1]+corection[1]))
         return personSize
 
-    def detect_full_image(self, intput_image, boudingRectList):
-        # self.personsRectArray = np.empty((0, 5))
+    def detect_full_image(self, intput_image, boudingRectList, b_display=False):
         self.RealPersonArray = np.empty((0, 4))
         ## 便利每一个bounding rect
         for boudingRect in boudingRectList:
@@ -94,12 +93,13 @@ class BodyDetection:
                     ## 计算某点person的(width,height)
                     pathSize = self.comput_person_wh([(x_w, x_h)], corection=self.param_dict["person_wh_correction"])
 
-                    ## show detecting window
-                    intput_image_copy = copy.deepcopy(intput_image)
-                    cv2.rectangle(intput_image_copy, (int(x_w-pathSize[0]/2), int(x_h-pathSize[1]/2)),
-                                  (int(x_w+pathSize[0]/2), int(x_h+pathSize[1]/2)), (0, 0, 255))
-                    cv2.imshow('detecting', intput_image_copy)
-                    cv2.waitKey(1)
+                    if b_display is True:
+                        ## show detecting window
+                        intput_image_copy = copy.deepcopy(intput_image)
+                        cv2.rectangle(intput_image_copy, (int(x_w-pathSize[0]/2), int(x_h-pathSize[1]/2)),
+                                      (int(x_w+pathSize[0]/2), int(x_h+pathSize[1]/2)), (0, 0, 255))
+                        cv2.imshow('detecting', intput_image_copy)
+                        cv2.waitKey(1)
 
                     ## 截取 sub rect and detection
                     subImg = cv2.getRectSubPix(intput_image, pathSize, (x_w, x_h))

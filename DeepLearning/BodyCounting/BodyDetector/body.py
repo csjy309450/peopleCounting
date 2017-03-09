@@ -41,7 +41,6 @@ import os
 import re
 import sys
 import tarfile
-import numpy as np
 
 from six.moves import urllib
 import tensorflow as tf

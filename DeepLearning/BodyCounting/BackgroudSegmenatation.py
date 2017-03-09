@@ -70,11 +70,12 @@ class BackgroudSegmentation:
         contours = temp[1]
         boundingRect = []
 
-        # fill contours
+        ## fill contours
         self.contoursMask = np.zeros_like(self.frame)
         for i in xrange(len(contours)):
             cv2.drawContours(self.contoursMask, contours, i, (255, 255, 255), cv2.FILLED)
-        cv2.imshow('point', self.contoursMask)
+        ## display valid points
+        # cv2.imshow('contours mask', self.contoursMask)
 
         for points in contours:
             r = cv2.boundingRect(points)
@@ -86,6 +87,9 @@ class BackgroudSegmentation:
         # print boundingRect
         return boundingRect
 
+    def get_contours_mask(self):
+        return self.contoursMask
+
     def comput_person_wh(self, pos, corection=(0, 0)):
         personRect = self.person_tall_reg.predict(pos)
         personSize = (int(personRect[0, 0]+corection[0]), int(personRect[0, 1]+corection[1]))
@@ -93,13 +97,12 @@ class BackgroudSegmentation:
 
     def DrawBoudningBox(self, img, boundingRect):
         # gray_img = cv2.cvtColor(img, cv2.COLOR_BAYER_BG2GRAY)
-        img_ = img.copy()
+        img_ = copy.deepcopy(img)
         for rect in boundingRect:
             startPos = (int(rect[0]), int(rect[1]))
             endPos = (int(rect[0] + rect[2]), int(rect[1] + rect[3]))
             img_ = cv2.rectangle(img_, startPos, endPos, color=(0, 0, 255))
         return img_
-
 
     def ImgSeqProcessing_test(self):
         for imgPath in self.imgsList:
@@ -120,21 +123,34 @@ class BackgroudSegmentation:
             cv2.waitKey()
         cv2.destroyAllWindows()
 
+    def frame_file_name(self):
+        return self.imgsList[self.nframe]
+
     def ImgSeqProcessing(self):
-        if self.nframe == len(self.imgsList):
+        """
+        读取一帧图像提取前景图像,寻找有效Rect搜索区域
+        :return:
+        """
+        if ~self.isnot_take_out():
             return
+        ## 加载图像
         self.frame = cv2.imread(path.join(self.imgDir, self.imgsList[self.nframe]))
         if self.frame.shape[0] == 0:
             return
-        self.nframe+=1
+        self.nframe += 1
+        ## 前景提取
         self.fgmask = self.fgbg.apply(self.frame)
+        ## 形态学滤波
         self.fgmask = self.Dilate(self.fgmask, 0, 1)
         self.fgmask = self.Dilate(self.fgmask, 0, 2)
         # self.fgmask = self.Erode(self.fgmask, 1, 1)
         self.fgmask = self.Erode(self.fgmask, 1, 1)
-
+        ## 找到有效Rect搜索区域
         self.boundingRect = self.FindBoudingBox(self.fgmask, corection=self.param_dict["bouding_box_correction"])
-        self.outputImage = self.DrawBoudningBox(self.frame, self.boundingRect)
+
+    def get_bgs_image(self):
+        bgs_img = self.DrawBoudningBox(self.frame, self.boundingRect)
+        return bgs_img
 
     def getCurrentFrame(self):
         return self.frame
@@ -145,11 +161,11 @@ class BackgroudSegmentation:
     def getBoundingRect(self):
         return self.boundingRect
 
-    def getOutputImage(self):
-        return self.outputImage
-
     def getNFrame(self):
         return self.nframe
+
+    def isnot_take_out(self):
+        return ~(self.nframe == len(self.imgsList)-1)
 
 if __name__ == '__main__':
     imgDir = '/home/yangzheng/testData/pet/test/gammaCorrection'

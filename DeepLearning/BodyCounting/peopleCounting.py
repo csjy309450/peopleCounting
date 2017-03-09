@@ -1,14 +1,15 @@
 # -*-encoding=utf-8-*-
 import copy
+import os
+import os.path as path
 import cv2
 import datetime
-
 
 import BodyDetector.BodyDetection as bd
 import BackgroudSegmenatation as bs
 
 param_dict_ucsd = {
-    "imags_directory": "/home/yangzheng/testData/ucsd/vidf1_33_000.y",
+    "imags_directory": "",
     "input_shape": [1, 24, 24, 3],
     "person_tall_model_path": "./personTall_Regression/ucsd_personTall_Model.m",
     "person_wh_correction": (0.5, 1.5),
@@ -27,36 +28,74 @@ param_dict_pet = {
     "backgroud_seg_mode": bs.Mode_BackgroudSegmentation['Mode_KNN'],
 }
 
-mybd = bd.BodyDetection(param_dict_ucsd)
+imags_directory_list = [
+#"/home/yangzheng/testData/ucsd/vidf1_33_000.y",
+# "/home/yangzheng/testData/ucsd/vidf1_33_001.y",
+# "/home/yangzheng/testData/ucsd/vidf1_33_002.y",
+# "/home/yangzheng/testData/ucsd/vidf1_33_003.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_004.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_005.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_006.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_007.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_008.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_009.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_010.y",
+"/home/yangzheng/testData/ucsd/vidf1_33_011.y",
+]
+result_dir_path = "/home/yangzheng/myPrograms/test/peopleCounting/DeepLearning/BodyCounting/result_images/uscd_result"
 
-while 1:
-    frameStartTime = datetime.datetime.now()
-    mybd.mybs.ImgSeqProcessing()
-    frame = mybd.mybs.getCurrentFrame()
-    boundingRectList = mybd.mybs.getBoundingRect()
+for im_dir in imags_directory_list:
+    param_dict_ucsd["imags_directory"] = im_dir
+    cur_result_dir = path.join(result_dir_path, path.split(im_dir)[1])
+    try:
+        os.makedirs(cur_result_dir)
+    except Exception, e:
+        if e.args[1] != "File exists":
+            exit(0)
 
-    ##test
-    frame_copy = copy.deepcopy(frame)
-    frame_copy = mybd.mybs.DrawBoudningBox(frame_copy, boundingRectList)
-    cv2.imshow('background segmentation', frame_copy)
-    cv2.imshow('background mask', mybd.mybs.fgmask)
+    mybd = bd.BodyDetection(param_dict_ucsd)
+    person_count_file = path.join(cur_result_dir, "person_count.txt")
+    f = open(person_count_file, mode="w")
+    while mybd.mybs.isnot_take_out() is True:
+        print mybd.mybs.isnot_take_out()
+        frameStartTime = datetime.datetime.now()
+        mybd.mybs.ImgSeqProcessing()
+        frame = mybd.mybs.getCurrentFrame()
+        boundingRect = mybd.mybs.getBoundingRect()
+        frame_file_name = path.splitext(mybd.mybs.frame_file_name())
 
-    if len(boundingRectList) <= 2:
-        continue
-    print "*************************************"
-    mybd.detect_full_image(frame, boundingRectList)
-    reulte = copy.deepcopy(frame)
-    PerosnArray = mybd.getRealPersonArray()
-    for it in PerosnArray:
-        cv2.rectangle(reulte, (int(it[0]), int(it[1])),
-                      (int(it[2]), int(it[3])),
-                      (0, 0, 255))
+        if len(boundingRect) <= 2:
+            continue
 
-    print "personCount is: ", PerosnArray.shape[0]
-    cv2.imshow('org img', frame)
-    cv2.imshow('reulte', reulte)
+        # ## display background segmentation result
+        # cv2.imshow('background segmentation', mybd.mybs.get_bgs_image())
+        # cv2.imshow('background mask', mybd.mybs.fgmask)
+        # cv2.imshow('contours mask', mybd.mybs.contoursMask)
+        cv2.imwrite(path.join(cur_result_dir, frame_file_name[0] + "_bs" + frame_file_name[1]),
+                    mybd.mybs.get_bgs_image())
+        cv2.imwrite(path.join(cur_result_dir, frame_file_name[0] + "_cm" + frame_file_name[1]), mybd.mybs.contoursMask)
 
-    frameEndTime = datetime.datetime.now()
-    print "time is: ", (frameEndTime-frameStartTime).seconds
+        print "*************************************"
+        mybd.detect_full_image(frame, boundingRect)
+        ## output result
+        PerosnArray = mybd.getRealPersonArray()
+        print "personCount is: ", PerosnArray.shape[0]
+        f.write(str(PerosnArray.shape[0]) + "\n")
 
-    cv2.waitKey()
+        frameEndTime = datetime.datetime.now()
+        print "time is: ", (frameEndTime - frameStartTime).seconds, "(s)", \
+            (frameEndTime - frameStartTime), "(ms)"
+
+        ## display result image
+        reulte = copy.deepcopy(frame)
+        for it in PerosnArray:
+            cv2.rectangle(reulte, (int(it[0]), int(it[1])),
+                          (int(it[2]), int(it[3])),
+                          (0, 0, 255))
+
+        # cv2.imshow('org img', frame)
+        # cv2.imshow('reulte', reulte)
+        cv2.imwrite(path.join(cur_result_dir, frame_file_name[0] + "_result" + frame_file_name[1]), reulte)
+        # cv2.waitKey(0)
+
+    f.close()
