@@ -29,10 +29,20 @@ param_dict_pet = {
     "backgroud_seg_mode": bs.Mode_BackgroudSegmentation['Mode_KNN'],
 }
 
+param_dict_pet = {
+    "imags_directory": "",
+    "input_shape": [1, 24, 24, 3],
+    "person_tall_model_path": "./personTall_Regression/mall_personTall_Model.m",
+    "person_wh_correction": (0.5, 1.5),
+    "bouding_box_correction": (3, 6),
+    "nms_thresh": 0.3,
+    "backgroud_seg_mode": bs.Mode_BackgroudSegmentation['Mode_KNN'],
+}
+
 imags_directory_list = [
-    "/home/yangzheng/testData/pet/View_001"
+    "/home/yangzheng/testData/mall_dataset/frames/Sample-213x160"
 ]
-result_dir_path = "./result_images/pet_result"
+result_dir_path = "./result_images/mall_result"
 param_dict = param_dict_pet
 
 for im_dir in imags_directory_list:
